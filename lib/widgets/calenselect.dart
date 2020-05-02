@@ -1,41 +1,45 @@
-import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import './secdrawer.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+
+
+class DateTimePicker extends StatefulWidget {
+  @override
+  _DateTimePickerState createState() => _DateTimePickerState();
+}
+
+class _DateTimePickerState extends State<DateTimePicker> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Calender(),
+    );
+  }
+}
+
 class Calender extends StatefulWidget {
   @override
   _CalenderState createState() => _CalenderState();
 }
 
 class _CalenderState extends State<Calender> {
-  CalendarController _controller;
-  Map<DateTime, List<dynamic>> _events;
-  TextEditingController _eventController;
+  String _date = "Date Not Set";
+  String _time = "Time Not Set";
 
 
   @override
   void initState() {
     super.initState();
-    _controller = CalendarController();
-    _eventController = TextEditingController();
-    _events = {};
-  
   }
 
-
-  Map<String, dynamic> encodeMap(Map<DateTime, dynamic> map) {
-    Map<String, dynamic> newMap = {};
-    map.forEach((key, value) {
-      newMap[key.toString()] = map[key];
-    });
-    return newMap;
-  }
-
-  Map<DateTime, dynamic> decodeMap(Map<String, dynamic> map) {
-    Map<DateTime, dynamic> newMap = {};
-    map.forEach((key, value) {
-      newMap[DateTime.parse(key)] = map[key];
-    });
-    return newMap;
+  void transferDate(BuildContext ctx) {
+    Navigator.of(ctx).pushNamed(
+      'mainpage',
+       arguments:{
+         'date': _date
+        }
+    );
   }
 
   @override
@@ -43,88 +47,164 @@ class _CalenderState extends State<Calender> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar:AppBar(
-        title: Text('Teacher App'),
+        title: Text('Welcome!'),
       ),
       drawer: MainDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-                      TableCalendar(
-  
-                      events:_events,
-                      calendarStyle: CalendarStyle(
-  
-                        todayColor: Colors.teal[200],
-  
-                        selectedColor: Colors.deepPurple,
-  
-                        todayStyle: TextStyle(
-  
-                          fontWeight: FontWeight.bold,
-  
-                        ),
-  
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0)),
+                elevation: 4.0,
+                onPressed: () {
+                  DatePicker.showDatePicker(context,
+                      theme: DatePickerTheme(
+                        containerHeight: 310.0,
                       ),
-                      
-                      builders : CalendarBuilders(
-  
-                        selectedDayBuilder:  (context,date,events)=> 
-  
-                        Container(
-                          margin: const EdgeInsets.all(4.0),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color :Colors.deepPurple[300],
-                            shape :BoxShape.circle,
-                          ),
-  
-                          child: Text(date.day.toString(), style:TextStyle(
-                            color: Colors.white,
-                          ))
-                        
-                        )
+                      showTitleActions: true,
+                      minTime: DateTime(2010, 1, 1),
+                      maxTime: DateTime(2030, 12, 31), onConfirm: (date) {
+                    print('confirm $date');
+                    _date = '${date.day} / ${date.month} / ${date.year}';
+                    setState(() {});
+                    
+                  }, 
+                  currentTime: DateTime.now(), locale: LocaleType.en);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 50.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.date_range,
+                                  size: 18.0,
+                                  color: Colors.teal,
+                                ),
+                                Text(
+                                  " $_date",
+                                  style: TextStyle(
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
-                      calendarController: _controller,
-                    ),
-          ],
+                      Text(
+                        "  Change",
+                        style: TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0),
+                      ),
+                    ],
+                  ),
+                ),
+                color: Colors.white,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              RaisedButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0)),
+                elevation: 4.0,
+                onPressed: () {
+                  DatePicker.showTimePicker(context,
+                      theme: DatePickerTheme(
+                        containerHeight: 210.0,
+                      ),
+                      showTitleActions: true, onConfirm: (time) {
+                    print('confirm $time');
+                    _time = '${time.hour} : ${time.minute} : ${time.second}';
+                    setState(() {});
+                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                  setState(() {});
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 50.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.access_time,
+                                  size: 18.0,
+                                  color: Colors.teal,
+                                ),
+                                Text(
+                                  " $_time",
+                                  style: TextStyle(
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      Text(
+                        "  Change",
+                        style: TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0),
+                      ),
+                    ],
+                  ),
+                ),
+                color: Colors.white,
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              RaisedButton(
+                elevation: 4.0,
+                onPressed: () {
+                  transferDate(context);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 50.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[                     
+                      Text(
+                        " Save ",
+                        style: TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.0),
+                      ),
+                    ],
+                  ),
+                ),
+                color: Colors.white,
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: _showAddDialog,
-      ),
     );
-  }
-
-  _showAddDialog() {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              content: TextField(
-                controller: _eventController,
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Save"),
-                  onPressed: () {
-                    if (_eventController.text.isEmpty) return;
-                       setState(() {
-                    if (_events[_controller.selectedDay] != null) {
-                      _events[_controller.selectedDay]
-                          .add(_eventController.text);
-                    } else {
-                      _events[_controller.selectedDay] = [
-                        _eventController.text
-                      ];
-                    }
-                  });
-                    _eventController.clear();
-                    Navigator.pop(context);
-                  },
-                )
-              ],
-            )
-          );
   }
 }

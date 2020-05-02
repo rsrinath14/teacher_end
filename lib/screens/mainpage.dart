@@ -91,10 +91,12 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final routeArgs = ModalRoute.of(context).settings.arguments as Map<String, String>;
+    var date = routeArgs['date'];
     return Scaffold(
       backgroundColor: Colors.grey[100],
-     appBar:AppBar(
-        title: Text('Attendance Page'),
+      appBar:AppBar(
+        title: Text("                 "  + date),
         actions: <Widget>[
           IconButton(//to save work after taking attendance
             icon: Icon(
